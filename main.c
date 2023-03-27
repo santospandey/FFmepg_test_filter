@@ -30,7 +30,7 @@ static int init_filter_graph(AVFormatContext *ic, AVStream *audio_st) {
     }
 
     AVFilter *abuffer = avfilter_get_by_name("abuffer");
-    AVFilter *volume = avfilter_get_by_name("volume");
+    AVFilter *volume = avfilter_get_by_name("adelay");
     AVFilter *aformat = avfilter_get_by_name("aformat");
     AVFilter *abuffersink = avfilter_get_by_name("abuffersink");
 
@@ -51,8 +51,9 @@ static int init_filter_graph(AVFormatContext *ic, AVStream *audio_st) {
         return err;
     }
     // create volume filter
-    double vol = 0.20;
-    snprintf(strbuf, sizeof(strbuf), "volume=%f", vol);
+    int vol = 5000;
+    snprintf(strbuf, sizeof(strbuf), "%d|%d", vol, vol);
+    printf("output => %s\n", strbuf);
     fprintf(stderr, "volume: %s\n", strbuf);
     err = avfilter_graph_create_filter(&volume_ctx, volume, NULL,
             strbuf, NULL, filter_graph);
